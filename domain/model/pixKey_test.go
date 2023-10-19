@@ -21,8 +21,6 @@ func TestModel_NewPixKey(t *testing.T) {
 	key := "j@j.com"
 	pixKey, err := model.NewPixKey(kind, account, key)
 
-	print(pixKey.Kind)
-
 	require.NotEmpty(t, uuid.FromStringOrNil(pixKey.ID))
 	require.Equal(t, pixKey.Kind, kind)
 	require.Equal(t, pixKey.Status, "active")
