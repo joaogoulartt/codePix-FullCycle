@@ -1,0 +1,31 @@
+package grpc
+
+import (
+	"fmt"
+	"log"
+	"net"
+
+	"github.com/jinzhu/gorm"
+	"github.com/joaogoulartt/codePix-FullCycle-go/application/usecase"
+	"github.com/joaogoulartt/codePix-FullCycle-go/infrastructure/repository"
+	"google.golang.org/grpc"
+)
+
+func StartGrpcServer(database *gorm.DB, port int) {
+	grpcServer := grpc.NewServer()
+
+	pixRepository := repository.PixKeyRepositoryDb{Db: database}
+	pixUseCase := usecase.PixUseCase{PixKeyRepository: pixRepository}
+
+	address := fmt.Sprintf("0.0.0.0:%d", port)
+	listener, err := net.Listen("tcp", address)
+	if err != nil {
+		log.Fatal("cannot stgart grpc server: ", err)
+	}
+
+	log.Printf("gRPC server has been started on port %d", port)
+	err = grpcServer.Serve(listener)
+	if err != nil {
+		log.Fatal("cannot stgart grpc server: ", err)
+	}
+}

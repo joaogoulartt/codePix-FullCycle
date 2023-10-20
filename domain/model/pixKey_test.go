@@ -15,7 +15,7 @@ func TestModel_NewPixKey(t *testing.T) {
 
 	accountNumber := "abcnumber"
 	ownerName := "Wesley"
-	account, err := model.NewAccount(bank, ownerName, accountNumber)
+	account, err := model.NewAccount(bank, accountNumber, ownerName)
 
 	kind := "email"
 	key := "j@j.com"
