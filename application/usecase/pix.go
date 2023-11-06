@@ -1,8 +1,6 @@
 package usecase
 
-import (
-	"github.com/joaogoulartt/codePix-FullCycle-go/domain/model"
-)
+import "github.com/joaogoulartt/codePix-FullCycle-go/domain/model"
 
 type PixUseCase struct {
 	PixKeyRepository model.PixKeyRepositoryInterface

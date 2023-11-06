@@ -12,28 +12,25 @@ type TransactionUseCase struct {
 	PixRepository         model.PixKeyRepositoryInterface
 }
 
-func (t *TransactionUseCase) Register(accountId string, amount float64, pixKeyTo string, pixKeyKindTo string, description string) (*model.Transaction, error) {
+func (t *TransactionUseCase) Register(accountId string, amount float64, pixKeyto string, pixKeyKindTo string, description string, id string) (*model.Transaction, error) {
+
 	account, err := t.PixRepository.FindAccount(accountId)
 	if err != nil {
 		return nil, err
 	}
 
-	pixKey, err := t.PixRepository.FindKeyByKind(pixKeyTo, pixKeyKindTo)
+	pixKey, err := t.PixRepository.FindKeyByKind(pixKeyto, pixKeyKindTo)
 	if err != nil {
 		return nil, err
 	}
 
-	transaction, err := model.NewTransaction(account, amount, pixKey, description)
+	transaction, err := model.NewTransaction(account, amount, pixKey, description, id)
 	if err != nil {
 		return nil, err
 	}
 
-	err = t.TransactionRepository.Save(transaction)
-	if err != nil {
-		return nil, err
-	}
-
-	if transaction.ID != "" {
+	t.TransactionRepository.Save(transaction)
+	if transaction.Base.ID != "" {
 		return transaction, nil
 	}
 
@@ -44,7 +41,7 @@ func (t *TransactionUseCase) Register(accountId string, amount float64, pixKeyTo
 func (t *TransactionUseCase) Confirm(transactionId string) (*model.Transaction, error) {
 	transaction, err := t.TransactionRepository.Find(transactionId)
 	if err != nil {
-		log.Println("Transaction not found: ", transactionId)
+		log.Println("Transaction not found", transactionId)
 		return nil, err
 	}
 
@@ -57,10 +54,10 @@ func (t *TransactionUseCase) Confirm(transactionId string) (*model.Transaction, 
 	return transaction, nil
 }
 
-func (t *TransactionUseCase) Completed(transactionId string) (*model.Transaction, error) {
+func (t *TransactionUseCase) Complete(transactionId string) (*model.Transaction, error) {
 	transaction, err := t.TransactionRepository.Find(transactionId)
 	if err != nil {
-		log.Println("Transaction not found: ", transactionId)
+		log.Println("Transaction not found", transactionId)
 		return nil, err
 	}
 
@@ -73,18 +70,20 @@ func (t *TransactionUseCase) Completed(transactionId string) (*model.Transaction
 	return transaction, nil
 }
 
-func (t *TransactionUseCase) Error(transactionId string) (*model.Transaction, error) {
+func (t *TransactionUseCase) Error(transactionId string, reason string) (*model.Transaction, error) {
 	transaction, err := t.TransactionRepository.Find(transactionId)
 	if err != nil {
-		log.Println("Transaction not found: ", transactionId)
 		return nil, err
 	}
 
 	transaction.Status = model.TransactionError
+	transaction.CancelDescription = reason
+
 	err = t.TransactionRepository.Save(transaction)
 	if err != nil {
 		return nil, err
 	}
 
 	return transaction, nil
+
 }
