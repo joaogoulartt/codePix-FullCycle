@@ -2,7 +2,7 @@ services:
   app:
     build: .
     ports:
-    - "50051:50051"
+      - "50051:50051"
     volumes:
       - .:/go/src/
     extra_hosts:
