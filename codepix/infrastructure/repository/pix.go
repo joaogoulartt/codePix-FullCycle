@@ -11,22 +11,22 @@ type PixKeyRepositoryDb struct {
 	Db *gorm.DB
 }
 
-func (r PixKeyRepositoryDb) AddBank(bank *model.Bank) error {
+func (r PixKeyRepositoryDb) AddBank(bank *model.Bank) (*model.Bank, error) {
 	err := r.Db.Create(bank).Error
 
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return bank, nil
 }
 
-func (r PixKeyRepositoryDb) AddAccount(account *model.Account) error {
+func (r PixKeyRepositoryDb) AddAccount(account *model.Account) (*model.Account, error) {
 	err := r.Db.Create(account).Error
 
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return account, nil
 }
 
 func (r PixKeyRepositoryDb) RegisterKey(pixKey *model.PixKey) (*model.PixKey, error) {
@@ -67,7 +67,7 @@ func (r PixKeyRepositoryDb) FindBank(id string) (*model.Bank, error) {
 	r.Db.First(&bank, "id = ?", id)
 
 	if bank.ID == "" {
-		return nil, fmt.Errorf("no account was found")
+		return nil, fmt.Errorf("no bank was found")
 	}
 
 	return &bank, nil

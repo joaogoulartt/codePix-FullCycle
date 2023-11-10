@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package github.com.joaogoulartt.codepix;
+
+option go_package = "./protofiles;pb";
+
+message AccountRegistration {
+    string number = 1;
+    string ownerName = 2;
+    string bankId = 3;
+}
+
+message AccountId {
+    string id = 1;
+}
+
+message Bank {
+    string bankId = 1;
+    string code = 2;
+    string name = 3;
+}
+
+message AccountInfo {
+    string id = 1;
+    Bank bank = 2;
+    string number = 3;
+    string ownerName = 4;
+    string createdAt = 6;
+}
+
+message AccountCreatedResult {
+    string id = 1;
+    string status = 2;
+    string error = 3;
+}
+
+service AccountService {
+    rpc RegisterAccount (AccountRegistration) returns (AccountCreatedResult) {};
+    rpc Find(AccountId) returns (AccountInfo) {};
+}
