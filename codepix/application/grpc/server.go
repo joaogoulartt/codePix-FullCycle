@@ -18,9 +18,18 @@ func StartGrpcServer(database *gorm.DB, port int) {
 	reflection.Register(grpcServer)
 
 	pixRepository := repository.PixKeyRepositoryDb{Db: database}
+
 	pixUseCase := usecase.PixUseCase{PixKeyRepository: pixRepository}
 	pixGrpcService := NewPixGrpcService(pixUseCase)
 	pb.RegisterPixServiceServer(grpcServer, pixGrpcService)
+
+	accountUseCase := usecase.AccountCase{PixKeyRepository: repository.PixKeyRepositoryDb{Db: database}}
+	accountGrpcService := NewAccountGrpcService(accountUseCase)
+	pb.RegisterAccountServiceServer(grpcServer, accountGrpcService)
+
+	bankUseCase := usecase.BankUseCase{PixKeyRepository: repository.PixKeyRepositoryDb{Db: database}}
+	bankGrpcService := NewBankGrpcService(bankUseCase)
+	pb.RegisterBankServiceServer(grpcServer, bankGrpcService)
 
 	address := fmt.Sprintf("0.0.0.0:%d", port)
 	listener, err := net.Listen("tcp", address)

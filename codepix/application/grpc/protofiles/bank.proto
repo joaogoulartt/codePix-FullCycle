@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package github.com.joaogoulartt.codepix;
+
+import "pixkey.proto";
+
+option go_package = "./protofiles;pb";
+
+message BankRegistration {
+    string code = 1;
+    string name = 2;
+}
+
+message BankId {
+    string id = 1;
+}
+
+message Accounts {
+    repeated Account accounts = 1;
+}
+
+message BankInfo {
+    string id = 1;
+    string code = 2;
+    string name = 3;
+    Accounts accounts = 4;
+    string createdAt = 5;
+}
+
+message BankCreatedResult {
+    string id = 1;
+    string status = 2;
+    string error = 3;
+}
+
+service BankService {
+    rpc CreateBank (BankRegistration) returns (BankCreatedResult) {};
+    rpc Find(BankId) returns (BankInfo) {};
+}
